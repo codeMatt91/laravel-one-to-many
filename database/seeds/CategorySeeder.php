@@ -19,9 +19,9 @@ class CategorySeeder extends Seeder
             ['label' => 'Anime', 'color' => 'warning'],
             ['label' => 'Actuality', 'color' => 'secondary'],
             ['label' => 'Science', 'color' => 'success'],
-            ['label' => 'Food', 'color' => 'red'],
-            ['label' => 'Serie', 'color' => 'black'],
-            ['label' => 'Economy', 'color' => 'orange'],
+            ['label' => 'Food', 'color' => 'danger'],
+            ['label' => 'Serie', 'color' => 'dark'],
+            ['label' => 'Economy', 'color' => 'primary'],
         ];
 
         // Ciclo sull'array per riempire i campi della tabella creando un istanza della categoria 
