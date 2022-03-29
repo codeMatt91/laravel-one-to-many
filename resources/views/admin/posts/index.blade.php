@@ -21,6 +21,7 @@
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">Title</th>
+                        <th scope="col">Categoria</th>
                         <th scope="col">Slug</th>
                         <th scope="col">Creato il:</th>
                         <th scope="col">Modificato il:</th>
@@ -34,6 +35,7 @@
                             <td><a
                                     href="{{ route('admin.posts.show', $post->id) }}">{{ $post->title }}</a>
                             </td>
+                            <td>{{ $post->category->label }}</td>
                             <td>{{ $post->slug }}</td>
                             <td>{{ $post->created_at }}</td>
                             <td>{{ $post->updated_at }}</td>
