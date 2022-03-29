@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Post;
+use App\Models\Category;
 use Illuminate\Support\Str;
+
 
 class PostController extends Controller
 {
@@ -16,8 +18,9 @@ class PostController extends Controller
      */
     public function index()
     {
+        $categories = Category::all();
         $posts = Post::orderBy('updated_at', 'DESC')->paginate(10);
-        return view('admin.posts.index', compact('posts'));
+        return view('admin.posts.index', compact('posts', 'categories'));
     }
 
     /**
@@ -27,7 +30,9 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('admin.posts.create');
+        $categories = Category::all();
+        $post = new Post();
+        return view('admin.posts.create', compact('categories', 'post'));
     }
 
     /**
@@ -38,6 +43,20 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'title'=>'required|string|unique:posts|min:5/max:50',
+            'content'=>'required|string',
+            'image'=>'nullable|url',
+            'category_id' => 'nullable|exists:categories,id'
+        ],
+        [
+            'title.required'=>'Il titolo è obbligatorio',
+            'title.min'=>'La lunghezza minima del titolo è di 5 caratteri',
+            'title.max'=>'La lunghezza massim del titolo è di 50 caratteri',
+            'title.unique'=>"Esiste già un post dal titolo $request->title"
+        ]);
+
+
         $data = $request->all();
 
         $post = new Post();
@@ -69,7 +88,8 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        return view('admin.posts.edit', compact('post'));
+        $categories = Category::all();
+        return view('admin.posts.edit', compact('post', 'categories'));
     }
 
     /**
@@ -81,8 +101,23 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
+        $request->validate([
+            'title'=>['required','string', 'min:5', 'max:50'],
+            'content'=>'required|string',
+            'image'=>'nullable|url',
+            'category_id' => 'nullable|exists:categories,id'
+        ],
+        [
+            'title.required'=>'Il titolo è obbligatorio',
+            'title.min'=>'La lunghezza minima del titolo è di 5 caratteri',
+            'title.max'=>'La lunghezza massim del titolo è di 50 caratteri',
+            'title.unique'=>"Esiste già un post dal titolo $request->title"
+        ]);
+
         $data = $request->all();
-        $post->update();
+        $data['slug'] = Str::slug($request->title, '-');
+        $post->update($data);
+        
 
         return redirect()->route('admin.posts.show', compact('post'));
 
